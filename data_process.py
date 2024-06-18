@@ -46,7 +46,7 @@ def tabel_data_rfm():
 
     seg_map = {
         r'[1-2][1-2][1-2]': 'Pendatang',
-        r'[1-2][1-2][3-5]': 'Pendatang',
+        r'[1-2][1-2][3-5]': 'Pendatang baru',
         r'[1-2][3-5][1-2]': 'Berlangganan',
         r'[1-2][3-5][3-5]': 'Berlangganan',
         r'[3-5][1-2][1-2]': 'Loyal',
@@ -61,7 +61,7 @@ def tabel_data_rfm():
 
 def top_10():
     data = tabel_data_rfm()
-    top10 = data.nlargest(10, 'Monetary')
+    top10 = data.nsmallest(10, 'Monetary')
 
     return top10
 
@@ -222,16 +222,16 @@ def generate_trend_plot():
     data['tanggal_terakhir_pembelian'] = pd.to_datetime(data['tanggal_terakhir_pembelian'])
 
     # Konversi kolom tanggal_terakhir_pembelian menjadi bulan dan tahun
-    data['tahun'] = data['tanggal_terakhir_pembelian'].dt.to_period('Y')
+    data['bulan'] = data['tanggal_terakhir_pembelian'].dt.to_period('Y')
 
     # Kelompokkan data berdasarkan bulan dan tahun, dan hitung total penjualan
-    sales_data = data.groupby('tahun')['total_belanja'].sum()
+    sales_data = data.groupby('bulan')['total_belanja'].sum()
 
     # Buat plot garis
     plt.figure(figsize=(10, 6))
     plt.plot(sales_data.index.astype(str), sales_data.values, marker='o', linestyle='-')
     # plt.title('Trend Penjualan')
-    plt.xlabel('Tahun')
+    plt.xlabel('bulan')
     plt.ylabel('Total Penjualan')
     # plt.xticks(rotation=45)
     plt.grid(True)
